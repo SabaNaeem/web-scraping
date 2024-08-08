@@ -18,6 +18,8 @@ def fetch_content(page, url):
             for c in content:
                 titles.append(c.inner_text())
                 links.append(c.get_attribute('href'))
+                print(c.inner_text())
+                print(c.get_attribute('href'))
 
         return titles, links
     except Exception as err:
@@ -31,6 +33,7 @@ def fetch_description(page, url):
 
         page.wait_for_selector('div.wysiwyg-content.row')
         description = page.query_selector('div.wysiwyg-content.row').inner_text()
+        print(f"Url: {url} Description: {description}")
         return description
     except Exception as err:
         print(f"An error occurred while parsing HTML: {err}")
@@ -57,7 +60,10 @@ def main():
         titles, links = fetch_content(page, url)
         if titles and links:
             for link in links:
-                full_url = f"https://www.concordia.edu{link}"
+                if link.startswith('https://www.concordia.edu'):
+                    full_url = link
+                else:
+                    full_url = f"https://www.concordia.edu{link}"
                 description = fetch_description(page, full_url)
                 if description:
                     all_descriptions.append(description)
